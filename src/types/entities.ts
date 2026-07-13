@@ -1,0 +1,82 @@
+import type { Role } from "./auth";
+
+export interface Category {
+  id: string;
+  name: string;
+  description?: string;
+  isActive: boolean;
+}
+
+export interface Customer {
+  id: string;
+  name: string;
+  cpf: string;
+  email: string;
+  phone: string;
+  city: string;
+  isActive: boolean;
+}
+
+export interface Supplier {
+  id: string;
+  companyName: string;
+  tradeName?: string;
+  cnpj: string;
+  email: string;
+  phone: string;
+  isActive: boolean;
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: Role;
+  avatarUrl?: string;
+  isActive: boolean;
+}
+
+export type OrderStatus =
+  | "Criado"
+  | "EmSeparacao"
+  | "AguardandoEntrega"
+  | "EmEntrega"
+  | "Finalizado"
+  | "Cancelado";
+
+export interface Order {
+  id: string;
+  customerId: string;
+  customerName: string;
+  driverId?: string;
+  driverName?: string;
+  status: OrderStatus;
+  total: number;
+  createdAt: string;
+}
+
+export type DriverStatus = "Disponivel" | "EmEntrega" | "Indisponivel";
+
+export interface Driver {
+  id: string;
+  name: string;
+  phone: string;
+  vehicle?: string;
+  photoUrl?: string;
+  status: DriverStatus;
+  lastPosition?: { latitude: number; longitude: number };
+  positionUpdatedAt?: string;
+  speed?: number;
+}
+
+export type MovementType = "Entrada" | "Saida" | "Ajuste" | "Devolucao" | "Perda";
+
+export interface StockMovement {
+  id: string;
+  productId: string;
+  productName: string;
+  type: MovementType;
+  quantity: number;
+  userName: string;
+  createdAt: string;
+}

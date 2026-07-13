@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 30% 98%;
+    --foreground: 215 30% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 215 30% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 30% 12%;
+    --primary: 199 84% 32%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 25% 94%;
+    --secondary-foreground: 215 30% 18%;
+    --muted: 210 25% 94%;
+    --muted-foreground: 215 15% 44%;
+    --accent: 173 58% 39%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 46%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 152 60% 36%;
+    --warning: 38 92% 44%;
+    --border: 214 20% 88%;
+    --input: 214 20% 88%;
+    --ring: 199 84% 32%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 216 28% 8%;
+    --foreground: 210 20% 92%;
+    --card: 216 26% 11%;
+    --card-foreground: 210 20% 92%;
+    --popover: 216 26% 11%;
+    --popover-foreground: 210 20% 92%;
+    --primary: 199 78% 48%;
+    --primary-foreground: 216 28% 8%;
+    --secondary: 216 22% 16%;
+    --secondary-foreground: 210 20% 88%;
+    --muted: 216 22% 16%;
+    --muted-foreground: 215 15% 62%;
+    --accent: 173 58% 42%;
+    --accent-foreground: 216 28% 8%;
+    --destructive: 0 62% 52%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 152 55% 44%;
+    --warning: 38 92% 54%;
+    --border: 216 20% 20%;
+    --input: 216 20% 20%;
+    --ring: 199 78% 48%;
+  }
+
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground antialiased; }
+}
+
+/* Leaflet precisa de altura explícita */
+.leaflet-container { @apply h-full w-full rounded-lg; }

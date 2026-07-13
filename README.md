@@ -52,20 +52,29 @@ O perfil (`Administrador`, `Estoquista`, `Entregador`, `Visualizador`) vem no pa
 
 ## Tempo real (SignalR)
 
-Conexão única (`lib/signalr.ts`) com reconexão automática e token via `accessTokenFactory`. O hook `useSignalREvent(evento, handler)` registra/remove handlers por componente. `RealtimeNotifications` (montado no shell) escuta `DashboardAtualizado`, `NovaMovimentacao`, `EntregaIniciada`, `EntregaFinalizada` e invalida as queries correspondentes — o dashboard e as listas se atualizam sozinhos. `PosicaoEntregador` move os marcadores do mapa em tempo real.
+Conexão única (`lib/signalr.ts`) com reconexão automática e token via `accessTokenFactory`. O hook `useSignalREvent(evento, handler)` registra/remove handlers por componente. `RealtimeNotifications` (montado no shell) escuta `DashboardAtualizado`, `NovaMovimentacao`, `EntregaIniciada`, `EntregaFinalizada` e invalida as queries correspondentes — o dashboard e as listas se atualizam sozinhos.
 
-## Módulo de referência: Produtos
+> `useDriversRealtime` já está preparado para escutar `PosicaoEntregador` e mover os marcadores do mapa ao vivo, mas o backend ainda não publica esse evento — por decisão de produto, o mapa hoje mostra apenas a última posição gravada via `PATCH /drivers/{id}/position` (dado de exemplo, não rastreamento em tempo real). Ligar isso de verdade exigiria um app/dispositivo do entregador enviando posição periodicamente.
 
-`features/products` implementa o padrão completo que os demais módulos devem seguir:
+## Módulos implementados
 
-- `types/` contrato da entidade e payloads
-- `schemas/` Zod + React Hook Form
-- `hooks/use-products.ts` useQuery/useMutation com invalidação e toasts
-- `components/products-page.tsx` DataTable genérica + pesquisa com debounce + paginação + permissões
-- `components/product-form-dialog.tsx` modal de criar/editar com upload de imagem (multipart, preview e barra de progresso)
-- exclusão sempre via `ConfirmDialog`
+Todos os domínios têm feature completa (listar/criar/editar/excluir + regras específicas), seguindo o mesmo padrão em `features/<modulo>/{types,schemas,hooks,components}`:
 
-Para criar um novo módulo (ex.: Clientes): duplique a estrutura, troque o service (já existe `customersService` via `crud-factory`) e ajuste colunas/schema. As páginas stub em `app/(app)/*` indicam exatamente isso.
+| Módulo | Rota | Observação |
+|---|---|---|
+| Produtos | `/products` | módulo de referência do padrão (upload de imagem incluso) |
+| Categorias | `/categories` | |
+| Fornecedores | `/suppliers` | CNPJ + endereço completo |
+| Clientes | `/customers` | CPF + endereço completo |
+| Usuários | `/users` | restrito a Administrador; senha só no cadastro |
+| Movimentações | `/reports` | histórico de estoque com filtro por tipo + export CSV |
+| Entregadores | `/drivers` | vinculado a um Usuário com perfil Entregador; status inline |
+| Pedidos | `/orders` | itens dinâmicos, fluxo iniciar/finalizar/cancelar entrega |
+| Mapa | `/map` | renderiza a posição gravada dos entregadores (ver nota de SignalR acima) |
+| Dashboard | `/dashboard` | |
+| Configurações | `/settings` | **ainda placeholder** — não fez parte do escopo até agora |
+
+Para criar um módulo novo: duplique a estrutura de uma feature parecida (ex. `features/suppliers` pra algo com endereço, `features/categories` pra algo simples), troque o service e ajuste colunas/schema.
 
 ## UX e qualidade
 

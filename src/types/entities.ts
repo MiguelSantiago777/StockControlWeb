@@ -17,6 +17,16 @@ export interface Customer {
   isActive: boolean;
 }
 
+export interface Address {
+  street: string;
+  number: string;
+  complement?: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zipCode: string;
+}
+
 export interface Supplier {
   id: string;
   companyName: string;
@@ -24,6 +34,7 @@ export interface Supplier {
   cnpj: string;
   email: string;
   phone: string;
+  address: Address;
   isActive: boolean;
 }
 

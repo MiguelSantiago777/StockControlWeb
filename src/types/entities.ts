@@ -55,6 +55,14 @@ export type OrderStatus =
   | "Finalizado"
   | "Cancelado";
 
+export interface OrderItem {
+  productId: string;
+  productName: string;
+  unitPrice: number;
+  quantity: number;
+  subtotal: number;
+}
+
 export interface Order {
   id: string;
   customerId: string;
@@ -63,6 +71,7 @@ export interface Order {
   driverName?: string;
   status: OrderStatus;
   total: number;
+  items: OrderItem[];
   createdAt: string;
 }
 
@@ -71,13 +80,16 @@ export type DriverStatus = "Disponivel" | "EmEntrega" | "Indisponivel";
 export interface Driver {
   id: string;
   name: string;
+  cpf: string;
   phone: string;
+  userId: string;
   vehicle?: string;
   photoUrl?: string;
   status: DriverStatus;
   lastPosition?: { latitude: number; longitude: number };
   positionUpdatedAt?: string;
   speed?: number;
+  isActive: boolean;
 }
 
 export type MovementType = "Entrada" | "Saida" | "Ajuste" | "Devolucao" | "Perda";

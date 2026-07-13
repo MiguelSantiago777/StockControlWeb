@@ -21,9 +21,21 @@ export interface MovementFilters extends QueryParams {
   to?: string;
 }
 
+export interface CreateMovementPayload {
+  productId: string;
+  type: MovementType;
+  quantity: number;
+  note?: string;
+}
+
 export const movementsService = {
   async list(params?: MovementFilters): Promise<PagedResult<Movement>> {
     const { data } = await api.get<PagedResult<Movement>>("/movements", { params });
+    return data;
+  },
+
+  async create(payload: CreateMovementPayload): Promise<Movement> {
+    const { data } = await api.post<Movement>("/movements", payload);
     return data;
   },
 

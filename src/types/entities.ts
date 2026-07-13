@@ -7,16 +7,6 @@ export interface Category {
   isActive: boolean;
 }
 
-export interface Customer {
-  id: string;
-  name: string;
-  cpf: string;
-  email: string;
-  phone: string;
-  city: string;
-  isActive: boolean;
-}
-
 export interface Address {
   street: string;
   number: string;
@@ -25,6 +15,16 @@ export interface Address {
   city: string;
   state: string;
   zipCode: string;
+}
+
+export interface Customer {
+  id: string;
+  name: string;
+  cpf: string;
+  email: string;
+  phone: string;
+  address: Address;
+  isActive: boolean;
 }
 
 export interface Supplier {

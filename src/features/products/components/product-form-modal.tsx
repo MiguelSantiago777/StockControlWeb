@@ -155,7 +155,7 @@ export function ProductFormModal({ open, product, onOpenChange }: ProductFormMod
           </FormField>
 
           <FormField label="Imagem" htmlFor="image">
-            <UploadImage currentUrl={product?.imageUrl} progress={uploadProgress} onSelect={setImageFile} />
+            <UploadImage value={product?.imageUrl} progress={uploadProgress} onSelect={setImageFile} />
           </FormField>
 
           <DialogFooter>

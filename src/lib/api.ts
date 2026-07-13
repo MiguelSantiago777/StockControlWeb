@@ -16,7 +16,7 @@ type RetriableRequest = InternalAxiosRequestConfig & { _retry?: boolean };
 
 let refreshPromise: Promise<string> | null = null;
 
-async function refreshAccessToken(): Promise<string> {
+export async function refreshAccessToken(): Promise<string> {
   refreshPromise ??= axios
     .post<{ accessToken: string }>(
       `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`,

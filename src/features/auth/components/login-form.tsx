@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/components/shared/form-field";
 import { authService } from "@/services/auth";
+import { tokenStorage } from "@/lib/token-storage";
 import { useAuthStore } from "@/store/auth-store";
 import { loginSchema, type LoginFormValues } from "../schemas/login-schema";
 
@@ -30,6 +31,7 @@ export function LoginForm() {
     setError(null);
     try {
       const response = await authService.login(values);
+      tokenStorage.set(response.accessToken);
       setSession(response.user, response.accessToken, response.refreshToken);
       router.replace("/dashboard");
     } catch (err) {

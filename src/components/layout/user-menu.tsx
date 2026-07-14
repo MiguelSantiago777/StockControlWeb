@@ -14,7 +14,6 @@ import {
 import { useAuthStore } from "@/store/auth-store";
 import { authService } from "@/services/auth";
 import { stopConnection } from "@/lib/signalr";
-import { tokenStorage } from "@/lib/token-storage";
 import { getInitials } from "@/lib/utils";
 
 export function UserMenu() {
@@ -26,7 +25,6 @@ export function UserMenu() {
       await authService.logout();
     } finally {
       await stopConnection();
-      tokenStorage.clear();
       logout();
       router.replace("/login");
     }

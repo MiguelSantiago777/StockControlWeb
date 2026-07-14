@@ -3,6 +3,7 @@
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSidebarStore } from "@/store/sidebar-store";
+import { LocationSharingToggle } from "@/features/drivers/components/location-sharing-toggle";
 import { GlobalSearch } from "./global-search";
 import { NotificationsPopover } from "./notifications-popover";
 import { ThemeToggle } from "./theme-toggle";
@@ -26,6 +27,7 @@ export function Header() {
       <GlobalSearch />
 
       <div className="ml-auto flex items-center gap-1">
+        <LocationSharingToggle />
         <NotificationsPopover />
         <ThemeToggle />
         <UserMenu />

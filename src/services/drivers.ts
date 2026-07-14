@@ -25,4 +25,9 @@ export const driversService = {
     const { data } = await api.get<EligibleUser[]>("/drivers/eligible-users");
     return data;
   },
+
+  async getMine() {
+    const { data } = await api.get<Driver>("/drivers/me");
+    return data;
+  },
 };

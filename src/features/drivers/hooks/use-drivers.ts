@@ -36,6 +36,15 @@ export function useEligibleDriverUsers(enabled: boolean) {
   });
 }
 
+export function useMyDriver(enabled: boolean) {
+  return useQuery({
+    queryKey: ["drivers", "me"],
+    queryFn: () => driversService.getMine(),
+    enabled,
+    retry: false,
+  });
+}
+
 export function useCreateDriver() {
   const queryClient = useQueryClient();
 

@@ -1,18 +1,23 @@
 "use client";
 
-import { Plus, Truck, X, CheckCheck } from "lucide-react";
+import { Plus, Truck, X, CheckCheck, Route } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { DataTable, type Column } from "@/components/shared/data-table";
 import { PageHeader } from "@/components/shared/page-header";
+import { useMyDriver } from "@/features/drivers/hooks/use-drivers";
 import { usePermissions } from "@/hooks/use-permissions";
 import { formatCurrency } from "@/lib/utils";
 import { useCancelOrder, useFinishDelivery, useOrders } from "../hooks/use-orders";
 import { OrderFormModal } from "./order-form-modal";
 import { StartDeliveryModal } from "./start-delivery-modal";
+import { StartRouteModal } from "./start-route-modal";
 import type { Order, OrderStatus } from "@/types/entities";
+
+const STARTABLE_STATUSES: OrderStatus[] = ["Criado", "EmSeparacao", "AguardandoEntrega"];
 
 const STATUS_LABEL: Record<OrderStatus, string> = {
   Criado: "Criado",
@@ -33,17 +38,50 @@ const STATUS_VARIANT: Record<OrderStatus, "default" | "success" | "warning" | "d
 };
 
 export function OrdersPage() {
-  const { canManageStock, canDeliver } = usePermissions();
+  const { canManageStock, canDeliver, role } = usePermissions();
+  const isDriver = role === "Entregador";
+
   const [page, setPage] = useState(1);
   const [formOpen, setFormOpen] = useState(false);
   const [startingDelivery, setStartingDelivery] = useState<Order | undefined>();
+  const [startingRoute, setStartingRoute] = useState(false);
   const [cancelling, setCancelling] = useState<Order | undefined>();
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const query = useOrders({ page, pageSize: 10 });
+  const { data: myDriver } = useMyDriver(isDriver);
   const finishDelivery = useFinishDelivery();
   const cancelOrder = useCancelOrder();
 
+  const isStartable = (order: Order) => !order.driverId && STARTABLE_STATUSES.includes(order.status);
+
+  const toggleSelected = (orderId: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(orderId)) next.delete(orderId);
+      else next.add(orderId);
+      return next;
+    });
+  };
+
   const columns: Column<Order>[] = [
+    ...(isDriver
+      ? [
+          {
+            key: "select",
+            header: "",
+            className: "w-10",
+            render: (order: Order) =>
+              isStartable(order) ? (
+                <Checkbox
+                  checked={selectedIds.has(order.id)}
+                  onCheckedChange={() => toggleSelected(order.id)}
+                  aria-label={`Selecionar pedido de ${order.customerName} para a rota`}
+                />
+              ) : null,
+          } satisfies Column<Order>,
+        ]
+      : []),
     {
       key: "customerName",
       header: "Cliente",
@@ -114,11 +152,18 @@ export function OrdersPage() {
         title="Pedidos"
         breadcrumbs={[{ label: "Pedidos" }]}
         actions={
-          canManageStock && (
-            <Button onClick={() => setFormOpen(true)}>
-              <Plus className="h-4 w-4" /> Novo pedido
-            </Button>
-          )
+          <div className="flex items-center gap-2">
+            {isDriver && selectedIds.size > 0 && (
+              <Button onClick={() => setStartingRoute(true)} disabled={!myDriver}>
+                <Route className="h-4 w-4" /> Iniciar rota ({selectedIds.size})
+              </Button>
+            )}
+            {canManageStock && (
+              <Button onClick={() => setFormOpen(true)}>
+                <Plus className="h-4 w-4" /> Novo pedido
+              </Button>
+            )}
+          </div>
         }
       />
 
@@ -140,6 +185,14 @@ export function OrdersPage() {
         open={Boolean(startingDelivery)}
         orderId={startingDelivery?.id}
         onOpenChange={(open) => !open && setStartingDelivery(undefined)}
+      />
+
+      <StartRouteModal
+        open={startingRoute}
+        driverId={myDriver?.id}
+        orderIds={Array.from(selectedIds)}
+        onOpenChange={setStartingRoute}
+        onDone={() => setSelectedIds(new Set())}
       />
 
       <ConfirmDialog

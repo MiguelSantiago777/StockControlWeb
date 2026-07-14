@@ -1,6 +1,6 @@
 "use client";
 
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { MapPin, Pencil, Plus, Trash2 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { usePermissions } from "@/hooks/use-permissions";
 import { formatCpf, formatPhone } from "@/lib/utils";
 import { useDeleteDriver, useDrivers, useUpdateDriverStatus } from "../hooks/use-drivers";
 import { DriverFormModal } from "./driver-form-modal";
+import { SetPositionModal } from "./set-position-modal";
 import type { Driver, DriverStatus } from "@/types/entities";
 
 const STATUS_LABEL: Record<DriverStatus, string> = {
@@ -33,6 +34,7 @@ export function DriversPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Driver | undefined>();
   const [deleting, setDeleting] = useState<Driver | undefined>();
+  const [settingPosition, setSettingPosition] = useState<Driver | undefined>();
 
   const query = useDrivers({ page, pageSize: 10, search: search || undefined });
   const deleteMutation = useDeleteDriver();
@@ -75,9 +77,17 @@ export function DriversPage() {
           {
             key: "actions",
             header: "",
-            className: "w-24 text-right",
+            className: "w-32 text-right",
             render: (driver: Driver) => (
               <div className="flex justify-end gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setSettingPosition(driver)}
+                  aria-label={`Definir localização de ${driver.name}`}
+                >
+                  <MapPin className="h-4 w-4" />
+                </Button>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -141,6 +151,12 @@ export function DriversPage() {
       />
 
       <DriverFormModal open={formOpen} onOpenChange={setFormOpen} driver={editing} />
+
+      <SetPositionModal
+        open={Boolean(settingPosition)}
+        driver={settingPosition}
+        onOpenChange={(open) => !open && setSettingPosition(undefined)}
+      />
 
       <ConfirmDialog
         open={Boolean(deleting)}

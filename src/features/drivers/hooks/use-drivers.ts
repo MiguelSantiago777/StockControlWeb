@@ -74,6 +74,22 @@ export function useUpdateDriverStatus() {
   });
 }
 
+export function useUpdateDriverPosition() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, latitude, longitude }: { id: string; latitude: number; longitude: number }) =>
+      driversService.updatePosition(id, latitude, longitude),
+    onSuccess: () => {
+      toast.success("Localização atualizada");
+      void queryClient.invalidateQueries({ queryKey: KEY });
+    },
+    onError: () => {
+      toast.error("Não foi possível atualizar a localização");
+    },
+  });
+}
+
 export function useDeleteDriver() {
   const queryClient = useQueryClient();
 

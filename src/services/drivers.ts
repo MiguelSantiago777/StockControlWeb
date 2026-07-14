@@ -16,6 +16,11 @@ export const driversService = {
     return data;
   },
 
+  async updatePosition(id: string, latitude: number, longitude: number) {
+    const { data } = await api.patch<Driver>(`/drivers/${id}/position`, { latitude, longitude });
+    return data;
+  },
+
   async eligibleUsers() {
     const { data } = await api.get<EligibleUser[]>("/drivers/eligible-users");
     return data;

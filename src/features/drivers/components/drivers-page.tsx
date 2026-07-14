@@ -48,6 +48,11 @@ export function DriversPage() {
     { key: "cpf", header: "CPF", render: (driver) => formatCpf(driver.cpf) },
     { key: "phone", header: "Telefone", render: (driver) => formatPhone(driver.phone) },
     {
+      key: "vehicle",
+      header: "Veículo",
+      render: (driver) => (driver.vehiclePlate ? `${driver.vehiclePlate} (${driver.vehicleModel ?? driver.vehicleType})` : "—"),
+    },
+    {
       key: "status",
       header: "Status",
       render: (driver) =>

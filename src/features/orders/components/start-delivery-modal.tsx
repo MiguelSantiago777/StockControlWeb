@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/shared/form-field";
 import { driversService } from "@/services/drivers";
+import { vehiclesService } from "@/services/vehicles";
 import { useStartDelivery } from "../hooks/use-orders";
 
 interface StartDeliveryModalProps {
@@ -18,6 +19,7 @@ interface StartDeliveryModalProps {
 
 export function StartDeliveryModal({ open, orderId, onOpenChange }: StartDeliveryModalProps) {
   const [driverId, setDriverId] = useState("");
+  const [vehicleId, setVehicleId] = useState("");
   const startDelivery = useStartDelivery();
 
   const { data: drivers } = useQuery({
@@ -26,12 +28,19 @@ export function StartDeliveryModal({ open, orderId, onOpenChange }: StartDeliver
     enabled: open,
   });
 
+  const { data: vehicles } = useQuery({
+    queryKey: ["vehicles", "all"],
+    queryFn: () => vehiclesService.list({ pageSize: 100 }),
+    enabled: open,
+  });
+
   const available = drivers?.items.filter((d) => d.status === "Disponivel") ?? [];
 
   const handleConfirm = async () => {
-    if (!orderId || !driverId) return;
-    await startDelivery.mutateAsync({ id: orderId, driverId });
+    if (!orderId || !driverId || !vehicleId) return;
+    await startDelivery.mutateAsync({ id: orderId, driverId, vehicleId });
     setDriverId("");
+    setVehicleId("");
     onOpenChange(false);
   };
 
@@ -59,11 +68,28 @@ export function StartDeliveryModal({ open, orderId, onOpenChange }: StartDeliver
           )}
         </FormField>
 
+        <FormField label="Veículo" htmlFor="vehicleId">
+          <select
+            id="vehicleId"
+            value={vehicleId}
+            onChange={(e) => setVehicleId(e.target.value)}
+            className="flex h-9 w-full rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <option value="">Selecione...</option>
+            {vehicles?.items.map((v) => (
+              <option key={v.id} value={v.id}>{v.plate} {v.model ? `— ${v.model}` : ""}</option>
+            ))}
+          </select>
+          {vehicles?.items.length === 0 && (
+            <p className="text-xs text-muted-foreground">Nenhum veículo cadastrado. Cadastre em Veículos primeiro.</p>
+          )}
+        </FormField>
+
         <DialogFooter>
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={startDelivery.isPending}>
             Cancelar
           </Button>
-          <Button type="button" disabled={!driverId} loading={startDelivery.isPending} onClick={handleConfirm}>
+          <Button type="button" disabled={!driverId || !vehicleId} loading={startDelivery.isPending} onClick={handleConfirm}>
             Iniciar entrega
           </Button>
         </DialogFooter>

@@ -28,8 +28,8 @@ export const ordersService = {
     return data;
   },
 
-  async startDelivery(id: string, driverId: string) {
-    const { data } = await api.patch<Order>(`/orders/${id}/start-delivery`, { driverId });
+  async startDelivery(id: string, driverId: string, vehicleId: string) {
+    const { data } = await api.patch<Order>(`/orders/${id}/start-delivery`, { driverId, vehicleId });
     return data;
   },
 

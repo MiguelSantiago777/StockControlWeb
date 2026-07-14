@@ -37,7 +37,8 @@ export function useStartDelivery() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, driverId }: { id: string; driverId: string }) => ordersService.startDelivery(id, driverId),
+    mutationFn: ({ id, driverId, vehicleId }: { id: string; driverId: string; vehicleId: string }) =>
+      ordersService.startDelivery(id, driverId, vehicleId),
     onSuccess: () => {
       toast.success("Entrega iniciada");
       void queryClient.invalidateQueries({ queryKey: KEY });

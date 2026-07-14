@@ -77,18 +77,31 @@ export interface Order {
 
 export type DriverStatus = "Disponivel" | "EmEntrega" | "Indisponivel";
 
+export type VehicleType = "Moto" | "Carro" | "CaminhaoVan";
+
+export interface Vehicle {
+  id: string;
+  plate: string;
+  type: VehicleType;
+  model?: string;
+  isActive: boolean;
+}
+
 export interface Driver {
   id: string;
   name: string;
   cpf: string;
   phone: string;
   userId: string;
-  vehicle?: string;
   photoUrl?: string;
   status: DriverStatus;
   lastPosition?: { latitude: number; longitude: number };
   positionUpdatedAt?: string;
   speed?: number;
+  vehicleId?: string;
+  vehiclePlate?: string;
+  vehicleType?: VehicleType;
+  vehicleModel?: string;
   isActive: boolean;
 }
 
